@@ -14,10 +14,27 @@ const Shop = () => {
         .then(data => setProducts(data))
     }, [])
 
+    //data interact korbo with outside code/localStorage 
     useEffect( () =>{
         const storedCart = getShoppingCart()
-        console.log(storedCart)
-    }, [])
+        const savedCart = [];
+
+        //step-1: get id of the added product
+        for(const id in storedCart){
+            //step-2: get product from products using id
+            const addedProduct = products.find(product => product.id === id)
+            if(addedProduct){
+                //step-3: add quantity
+                const quantity = storedCart[id]
+                addedProduct.quantity = quantity
+
+                //step-4: add the added product to the saved cart (this is not state array thats why use push method)
+                savedCart.push(addedProduct)
+            }
+            //step-5: set the cart
+            setCart(savedCart)
+        }
+    }, [products])    //(products)-defendency dite hobe cz data load howa asyncronus. tai 1st ekbar call hobe and data change hole abr call korbe
 
     const handleAddToCart = (product) => {
         // cart.push(product)
