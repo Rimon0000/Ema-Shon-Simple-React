@@ -26,14 +26,26 @@ const Shop = () => {
      * Done: 1. Determine the total number of items:
      * TODO: 2. Decide on the number of items per page:
      * Done: 3. Calculate the total number of pages:
+     * Done: 4. Determine the current page:
      * 
      */
 
-    useEffect( ()=> {
-        fetch('http://localhost:5000/products')
-        .then(res => res.json())
-        .then(data => setProducts(data))
-    }, [])
+    // useEffect( ()=> {
+    //     fetch('http://localhost:5000/products')
+    //     .then(res => res.json())
+    //     .then(data => setProducts(data))
+    // }, [])
+
+    useEffect(() => {
+        async function fetchData() {
+          const response = await fetch(`http://localhost:5000/products?page=${currentPage}&limit=${itemPerPage}`);
+            const responseData = await response.json();
+            setProducts(responseData);
+        };
+    
+        fetchData();
+      }, [currentPage, itemPerPage]);
+
 
     //data interact korbo with outside code/localStorage 
     useEffect( () =>{
@@ -86,7 +98,7 @@ const Shop = () => {
         deleteShoppingCart()
     }
 
-    const options = [5, 10, 20]
+    const options = [5, 10, 15, 20]
     const handleSelectChange = (event) => {
         setItemPerPage(parseInt(event.target.value))
         setCurrentPage(0)
@@ -129,7 +141,7 @@ const Shop = () => {
                     options.map(option => <option 
                         key={option}
                         value={option}
-                        ></option>)
+                        >{option}</option>)
                 }
             </select>
         </div>
