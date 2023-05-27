@@ -50,12 +50,23 @@ const Shop = () => {
     //data interact korbo with outside code/localStorage 
     useEffect( () =>{
         const storedCart = getShoppingCart()
+        const ids = Object.keys(storedCart)
+
+        fetch('http://localhost:5000/productsByIds',{
+        method: 'POST',
+        headers: {
+            'content-type': 'application/json'
+        },
+        body: JSON.stringify(ids)
+    })
+    .then(res => res.json())
+    .then(cartProducts => {
         const savedCart = [];
 
         //step-1: get id of the added product
         for(const id in storedCart){
             //step-2: get product from products using id
-            const addedProduct = products.find(product => product._id === id)
+            const addedProduct = cartProducts.find(product => product._id === id)
             if(addedProduct){
                 //step-3: add quantity
                 const quantity = storedCart[id]
@@ -67,7 +78,9 @@ const Shop = () => {
             //step-5: set the cart
             setCart(savedCart)
         }
-    }, [products])    //(products)-defendency dite hobe cz data load howa asyncronus. tai 1st ekbar call hobe and data change hole abr call korbe
+    })
+
+    }, [])    //(products)-defendency dite hobe cz data load howa asyncronus. tai 1st ekbar call hobe and data change hole abr call korbe
 
 
     const handleAddToCart = (product) => {
@@ -134,7 +147,7 @@ const Shop = () => {
                     className={currentPage === number ? 'selected' : ''}
                     key={number}
                     onClick={() => setCurrentPage(number)}
-                    >{number}</button>)
+                    >{number + 1}</button>)
             }
             <select value={itemPerPage} onChange={handleSelectChange}>
                 {
